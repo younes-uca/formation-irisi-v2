@@ -133,48 +133,6 @@
             </plugin>
             <!-- End Test Plugins -->
 
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>
-                        ma.formation.irisi.IrisiApplication
-                    </mainClass>
-                    <layout>JAR</layout>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <version>3.4.0</version>
-                <configuration>
-                    <from>
-                        <image>openjdk:17</image>
-                    </from>
-                    <to>
-                        <image>registry.hub.docker.com/zouani/irisi</image>
-                    </to>
-                    <container>
-                        <jvmFlags>
-                            <jvmFlag>-DtargetJavaVersion=17</jvmFlag>
-                            <jvmFlag>-Dgcr.io.username=zouani</jvmFlag>
-                            <jvmFlag>-Dgcr.io.password=anaCherif@1987</jvmFlag>
-                        </jvmFlags>
-                    </container>
-
-                    <extraDirectories>
-                        <paths>
-                            <path>
-                                <from>/Users/HP/.m2/repository/com/mysql/mysql-connector-j/8.0.32</from>
-                                <into>/app/libs
-                                </into> <!-- The path inside the Docker image where the JAR will be placed -->
-                            </path>
-                        </paths>
-                    </extraDirectories>
-
-                </configuration>
-            </plugin>
 
 
         </plugins>
