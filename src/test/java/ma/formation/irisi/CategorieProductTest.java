@@ -38,13 +38,13 @@ class CategorieProductTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(productRequestString))
                 .andExpect(status().isCreated());
-        Assertions.assertEquals(103, categorieProduitAdminService.findAllOptimized().size());
+        Assertions.assertEquals(3, categorieProduitAdminService.findAllOptimized().size());
     }
 
     private CategorieProduitDto getCategorieProduitRequest() {
         CategorieProduitDto categorieProduitDto = new CategorieProduitDto();
-        categorieProduitDto.setLibelle("iPhone13");
-        categorieProduitDto.setReference("ipho13");
+        categorieProduitDto.setLibelle("samsung");
+        categorieProduitDto.setReference("samsung");
         return categorieProduitDto;
 
     }
