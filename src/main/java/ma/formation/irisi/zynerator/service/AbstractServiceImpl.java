@@ -12,13 +12,6 @@ import ma.formation.irisi.zynerator.util.FileUtils;
 import ma.formation.irisi.zynerator.util.ListUtil;
 import ma.formation.irisi.zynerator.util.MD5Checksum;
 import ma.formation.irisi.zynerator.util.RefelexivityUtil;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -391,15 +384,7 @@ public abstract class AbstractServiceImpl<T extends AuditBusinessObject, CRITERI
     }
 
     public List<T> importExcel(MultipartFile file) {
-        if (isValidExcelFile(file)) {
-            try {
-                List<T> items = read(file.getInputStream(), getAttributes());
-                this.dao.saveAll(items);
-                return items;
-            } catch (IOException e) {
-                throw new IllegalArgumentException("The file is not a valid excel file");
-            }
-        }
+
         return null;
     }
 
@@ -409,70 +394,6 @@ public abstract class AbstractServiceImpl<T extends AuditBusinessObject, CRITERI
 
     public boolean isValidExcelFile(MultipartFile file) {
         return Objects.equals(file.getContentType(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-    }
-
-    // create a methode that reade the file and take an inputStream as object and return a liste of commandes
-    private List<T> read(InputStream inputStream, List<Attribute> attributes) {
-        List<T> items = new ArrayList<>();
-
-        try {
-            XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
-            XSSFSheet sheet = workbook.getSheetAt(0);
-            int rowIndex;
-            int lastRowIndex = sheet.getLastRowNum();
-            for (rowIndex = 1; rowIndex <= lastRowIndex; rowIndex++) {
-                Row row = sheet.getRow(rowIndex);
-                int cellIndex = 0;
-                T item = itemClass.getDeclaredConstructor().newInstance();
-                BeanWrapper beanWrapper = new BeanWrapperImpl(item);
-                Iterator<Cell> cellIterator = row.cellIterator();
-                while (cellIterator.hasNext()) {
-                    Cell cell = cellIterator.next();
-                    String attributeName = attributes.get(cellIndex).getName();
-                    String type = attributes.get(cellIndex).getType();
-                    Class complexType = attributes.get(cellIndex).getComplexeType();
-                    Object value = null;
-                    if (cell.getCellType() != CellType.BLANK) {
-                        if (type.equals("String")) {
-                            value = cell.getStringCellValue();
-                        } else if (type.equals("BigDecimal")) {
-                            value = BigDecimal.valueOf(cell.getNumericCellValue());
-                        } else if (type.equals("Long")) {
-                            value = Long.valueOf((long) cell.getNumericCellValue());
-                        } else if (type.equals("Boolean")) {
-                            if (cell.getCellType() == CellType.NUMERIC) {
-                                double numericValue = cell.getNumericCellValue();
-                                value = numericValue == 1.0;
-                            } else if (cell.getCellType() == CellType.STRING) {
-                                value = Boolean.parseBoolean(cell.getStringCellValue());
-                            }
-                        } else if (type.equals("LocalDateTime")) {
-                            if (cell.getCellType() == CellType.NUMERIC) {
-                                Date dateValue = cell.getDateCellValue();
-                                Instant instant = dateValue.toInstant();
-                                value = instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
-                            } else if (cell.getCellType() == CellType.STRING) {
-                                String dateStr = cell.getStringCellValue();
-                                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy  HH:mm:ss");
-                                value = LocalDateTime.parse(dateStr, formatter);
-                            }
-                        }
-                    }
-                    if (complexType != null && value != null) {
-                        beanWrapper.setPropertyValue(attributeName.split("\\.")[0], complexType.getDeclaredConstructor().newInstance());
-                        beanWrapper.setPropertyValue(attributeName, value);
-                    } else if (complexType == null) {
-                        beanWrapper.setPropertyValue(attributes.get(cellIndex).getName(), value);
-                    }
-                    cellIndex++;
-                    }
-                    items.add(item);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return items;
     }
 
     //************************************************** UPDATE ***********************************

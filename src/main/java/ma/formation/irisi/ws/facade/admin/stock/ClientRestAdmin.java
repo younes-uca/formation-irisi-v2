@@ -1,4 +1,4 @@
-package  ma.formation.irisi.ws.facade.admin.stock;
+package ma.formation.irisi.ws.facade.admin.stock;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import ma.formation.irisi.zynerator.process.Result;
 
 
 import org.springframework.web.multipart.MultipartFile;
@@ -31,8 +31,7 @@ import ma.formation.irisi.zynerator.dto.FileTempDto;
 
 @RestController
 @RequestMapping("/api/admin/client/")
-public class ClientRestAdmin  extends AbstractController<Client, ClientDto, ClientCriteria, ClientAdminService, ClientConverter> {
-
+public class ClientRestAdmin extends AbstractController<Client, ClientDto, ClientCriteria, ClientAdminService, ClientConverter> {
 
 
     @Operation(summary = "upload one client")
@@ -40,6 +39,7 @@ public class ClientRestAdmin  extends AbstractController<Client, ClientDto, Clie
     public ResponseEntity<FileTempDto> uploadFileAndGetChecksum(@RequestBody MultipartFile file) throws Exception {
         return super.uploadFileAndGetChecksum(file);
     }
+
     @Operation(summary = "upload multiple clients")
     @RequestMapping(value = "upload-multiple", method = RequestMethod.POST, consumes = "multipart/form-data")
     public ResponseEntity<List<FileTempDto>> uploadMultipleFileAndGetChecksum(@RequestBody MultipartFile[] files) throws Exception {
@@ -87,10 +87,11 @@ public class ClientRestAdmin  extends AbstractController<Client, ClientDto, Clie
     public ResponseEntity<List<ClientDto>> delete(@RequestBody List<ClientDto> listToDelete) throws Exception {
         return super.delete(listToDelete);
     }
+
     @Operation(summary = "Delete the specified client")
     @DeleteMapping("")
     public ResponseEntity<ClientDto> delete(@RequestBody ClientDto dto) throws Exception {
-            return super.delete(dto);
+        return super.delete(dto);
     }
 
     @Operation(summary = "Delete the specified client")
@@ -98,11 +99,12 @@ public class ClientRestAdmin  extends AbstractController<Client, ClientDto, Clie
     public ResponseEntity<Long> deleteById(@PathVariable Long id) throws Exception {
         return super.deleteById(id);
     }
+
     @Operation(summary = "Delete multiple clients by ids")
     @DeleteMapping("multiple/id")
     public ResponseEntity<List<Long>> deleteByIdIn(@RequestBody List<Long> ids) throws Exception {
-            return super.deleteByIdIn(ids);
-     }
+        return super.deleteByIdIn(ids);
+    }
 
 
     @Operation(summary = "Finds clients by criteria")
@@ -117,11 +119,6 @@ public class ClientRestAdmin  extends AbstractController<Client, ClientDto, Clie
         return super.findPaginatedByCriteria(criteria);
     }
 
-    @Operation(summary = "Exports clients by criteria")
-    @PostMapping("export")
-    public ResponseEntity<InputStreamResource> export(@RequestBody ClientCriteria criteria) throws Exception {
-        return super.export(criteria);
-    }
 
     @Operation(summary = "Gets client data size by criteria")
     @PostMapping("data-size-by-criteria")
@@ -130,12 +127,9 @@ public class ClientRestAdmin  extends AbstractController<Client, ClientDto, Clie
     }
 
 
-
-    public ClientRestAdmin (ClientAdminService service, ClientConverter converter) {
+    public ClientRestAdmin(ClientAdminService service, ClientConverter converter) {
         super(service, converter);
     }
-
-
 
 
 }

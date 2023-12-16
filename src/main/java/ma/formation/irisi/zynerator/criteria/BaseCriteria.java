@@ -1,6 +1,5 @@
 package ma.formation.irisi.zynerator.criteria;
 
-import ma.formation.irisi.zynerator.export.ExportModel;
 
 import java.io.Serializable;
 import java.util.List;
@@ -22,7 +21,6 @@ public class BaseCriteria implements Serializable {
     protected boolean peagable;
     protected String filterName;
     protected String filterWord;
-    protected ExportModel exportModel;
     protected String[] includes;
     protected String[] excludes;
 
@@ -150,14 +148,6 @@ public class BaseCriteria implements Serializable {
 
     public void setFilterWord(String filterWord) {
         this.filterWord = filterWord;
-    }
-
-    public ExportModel getExportModel() {
-        return exportModel;
-    }
-
-    public void setExportModel(ExportModel exportModel) {
-        this.exportModel = exportModel;
     }
 
     public String[] getIncludes() {

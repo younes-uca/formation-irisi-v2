@@ -1,10 +1,8 @@
 package ma.formation.irisi.zynerator.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import ma.formation.irisi.zynerator.exception.GlobalException;
-import ma.formation.irisi.zynerator.export.ExportModel;
 import ma.formation.irisi.zynerator.util.BirtWarpper;
-import ma.formation.irisi.zynerator.util.ExportUtil;
-import ma.formation.irisi.zynerator.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -16,7 +14,6 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -28,19 +25,15 @@ public abstract class BaseController {
     private MessageSource messageSource;
 
 
-@Value("${uploads.location.directory}")
+    @Value("${uploads.location.directory}")
     private String UPLOADED_FOLDER;
 
     protected static ClientHttpRequestFactory clientHttpRequestFactory() {
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        factory.setReadTimeout(200000);
         factory.setConnectTimeout(200000);
         return factory;
     }
 
-    private static boolean isNotEmpty(ExportModel exportModel) {
-        return exportModel != null && exportModel.getList() != null && !exportModel.getList().isEmpty();
-    }
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> exceptionHandler(Exception e, HttpServletRequest request) throws IOException {
@@ -75,18 +68,6 @@ public abstract class BaseController {
         return null;
     }
 
-    // Download file
-    protected ResponseEntity<InputStreamResource> getExportedFileResource(ExportModel exportModel) throws Exception {
-        if (isNotEmpty(exportModel)) {
-            String fichier = ExportUtil.exportedList(exportModel, UPLOADED_FOLDER);
-            File file = new File(fichier);
-            FileInputStream inputStream = new FileInputStream(file);
-            InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
-            String fileName = FileUtils.getFileName(file.getName());
-            return ResponseEntity.ok().eTag(fileName).contentLength(file.length()).contentType(MediaType.parseMediaType(Files.probeContentType(file.toPath()))).body(inputStreamResource);
-        }
-        return new ResponseEntity(HttpStatus.NOT_FOUND);
-    }
 
     // Download file
     protected ResponseEntity<InputStreamResource> getFileResource(String fichier, String fileName) throws Exception {

@@ -8,7 +8,6 @@ import ma.formation.irisi.zynerator.dto.BaseDto;
 import ma.formation.irisi.zynerator.dto.FileTempDto;
 import ma.formation.irisi.zynerator.exception.BusinessRuleException;
 import ma.formation.irisi.zynerator.exception.GlobalException;
-import ma.formation.irisi.zynerator.export.ExportModel;
 import ma.formation.irisi.zynerator.service.IService;
 import ma.formation.irisi.zynerator.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,19 +40,14 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
     private MessageSource messageSource;
 
 
-@Value("${uploads.location.directory}")
+    @Value("${uploads.location.directory}")
     private String UPLOADED_FOLDER;
-@Value("${uploads.location.temp}")
+    @Value("${uploads.location.temp}")
     private String UPLOADED_TEMP_FOLDER;
 
 
     public String generateRandomFileName(String fileName) throws IOException {
-        String extention = com.google.common.io.Files.getFileExtension(fileName);
-        String prefix = "tmp";
-        if (StringUtil.isNotEmpty(extention)) {
-        File tmpQuittanceFile = File.createTempFile(prefix, "."+extention, new File(UPLOADED_TEMP_FOLDER));
-            return tmpQuittanceFile.getName();
-        }
+
         return String.valueOf(UniqueID.get());
     }
 
@@ -62,20 +56,20 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
         return (dotIndex == -1) ? fileName : fileName.substring(0, dotIndex);
     }
 
-    public List<DTO> findDtos(List<T> list){
+    public List<DTO> findDtos(List<T> list) {
         converter.initList(false);
         List<DTO> dtos = converter.toDto(list);
         converter.initList(false);
         return dtos;
     }
 
-            public ResponseEntity<List<T>> importExcel(MultipartFile file){
+    public ResponseEntity<List<T>> importExcel(MultipartFile file) {
         List<T> items = this.service.importExcel(file);
         return ResponseEntity.ok(items);
     }
 
     public ResponseEntity<List<FileTempDto>> uploadMultipleFileAndGetChecksum(@RequestBody MultipartFile[] files) throws Exception {
-        List<FileTempDto> result= new ArrayList<>();
+        List<FileTempDto> result = new ArrayList<>();
         if (files != null) {
             for (MultipartFile file : files) {
                 result.add(uploadFileAndGetChecksum(file).getBody());
@@ -90,7 +84,7 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
         if (file != null) {
             File convFile = new File(UPLOADED_FOLDER + generateRandomFileName(file.getOriginalFilename()));
             if (!convFile.getParentFile().exists())
-            convFile.getParentFile().mkdirs();
+                convFile.getParentFile().mkdirs();
             convFile.createNewFile();
             FileOutputStream fos = new FileOutputStream(convFile);
             fos.write(file.getBytes());
@@ -105,29 +99,14 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
         return new ResponseEntity<FileTempDto>(HttpStatus.NOT_FOUND);
     }
 
-    // Download file
-    public static ResponseEntity<InputStreamResource> getExportedFileResource(ExportModel exportModel, String uploadFolder) throws Exception {
-        if (exportModel != null && exportModel.getList() != null && !exportModel.getList().isEmpty()) {
-            String fichier = ExportUtil.exportedList(exportModel, uploadFolder);
-            File file = new File(fichier);
-            FileInputStream inputStream = new FileInputStream(file);
-            InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
-            String fileName = FileUtils.getFileName(file.getName());
-            return ResponseEntity.ok().eTag(fileName).contentLength(file.length()).contentType(MediaType.parseMediaType(Files.probeContentType(file.toPath()))).body(inputStreamResource);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
 
     protected static ClientHttpRequestFactory clientHttpRequestFactory() {
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-       // factory.setReadTimeout(200000);
+        // factory.setReadTimeout(200000);
         factory.setConnectTimeout(200000);
         return factory;
     }
 
-    private static boolean isNotEmpty(ExportModel exportModel) {
-        return exportModel != null && exportModel.getList() != null && !exportModel.getList().isEmpty();
-    }
 
     public ResponseEntity<DTO> findById(Long id, String[] includes, String[] excludes) throws Exception {
         T t = service.findById(id);
@@ -136,7 +115,7 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
             DTO dto = converter.toDto(t);
             return getDtoResponseEntity(dto, includes, excludes);
         }
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
 
@@ -151,13 +130,13 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
     }
 
     public ResponseEntity<DTO> findWithAssociatedLists(Long id) {
-        T loaded =  service.findWithAssociatedLists(id);
+        T loaded = service.findWithAssociatedLists(id);
         converter.init(true);
         DTO dto = converter.toDto(loaded);
         return new ResponseEntity<>(dto, HttpStatus.OK);
-     }
+    }
 
-    private  ResponseEntity<DTO> getDtoResponseEntity(DTO dto, String[] includes, String[] excludes) throws Exception {
+    private ResponseEntity<DTO> getDtoResponseEntity(DTO dto, String[] includes, String[] excludes) throws Exception {
         if (StringUtil.isNoEmpty(includes) || StringUtil.isNoEmpty(excludes))
             dto = converter.copyIncludeExclude(dto, includes, excludes);
         return new ResponseEntity<>(dto, HttpStatus.OK);
@@ -165,29 +144,29 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
 
 
     public ResponseEntity<DTO> save(DTO dto) throws Exception {
-        if(dto!=null){
+        if (dto != null) {
             converter.init(true);
             T myT = converter.toItem(dto);
             T t = service.create(myT);
             if (t == null) {
                 return new ResponseEntity<>(null, HttpStatus.IM_USED);
-            }else{
+            } else {
                 DTO myDto = converter.toDto(t);
                 return new ResponseEntity<>(myDto, HttpStatus.CREATED);
             }
-        }else {
+        } else {
             return new ResponseEntity<>(dto, HttpStatus.NO_CONTENT);
         }
     }
 
 
     public ResponseEntity<DTO> update(DTO dto) throws Exception {
-        ResponseEntity<DTO> res ;
+        ResponseEntity<DTO> res;
         if (dto.getId() == null || service.findById(dto.getId()) == null)
             res = new ResponseEntity<>(HttpStatus.CONFLICT);
         else {
             T t = service.findById(dto.getId());
-            converter.copy(dto,t);
+            converter.copy(dto, t);
             T updated = service.update(t);
             DTO myDto = converter.toDto(updated);
             res = new ResponseEntity<>(myDto, HttpStatus.OK);
@@ -197,7 +176,7 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
 
 
     public ResponseEntity<List<DTO>> delete(List<DTO> dtos) throws Exception {
-        ResponseEntity<List<DTO>> res ;
+        ResponseEntity<List<DTO>> res;
         HttpStatus status = HttpStatus.CONFLICT;
         if (dtos != null && !dtos.isEmpty()) {
             converter.init(false);
@@ -223,7 +202,7 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
     }
 
 
-    protected ResponseEntity<Long> deleteById(Long id)  throws Exception {
+    protected ResponseEntity<Long> deleteById(Long id) throws Exception {
         ResponseEntity<Long> res;
         HttpStatus status = HttpStatus.PRECONDITION_FAILED;
         if (id != null) {
@@ -237,7 +216,7 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
     }
 
 
-    protected ResponseEntity<List<Long>> deleteByIdIn(List<Long> ids)  throws Exception {
+    protected ResponseEntity<List<Long>> deleteByIdIn(List<Long> ids) throws Exception {
         ResponseEntity<List<Long>> res;
         HttpStatus status = HttpStatus.CONFLICT;
         if (ids != null) {
@@ -281,7 +260,7 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
         HttpStatus status = HttpStatus.NO_CONTENT;
         dtos = converter.toDto(list);
         if (dtos != null && !dtos.isEmpty())
-        status = HttpStatus.OK;
+            status = HttpStatus.OK;
 
         res = new ResponseEntity<>(dtos, status);
         return res;
@@ -302,18 +281,6 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
     }
 
 
-    public ResponseEntity<InputStreamResource> export(Criteria criteria) throws Exception {
-        ResponseEntity<InputStreamResource> res = null;
-        if (criteria.getExportModel() == null)
-            res = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        else {
-            criteria.setMaxResults(null);
-            List<T> list = service.findByCriteria(criteria);
-            criteria.getExportModel().setList(list);
-            res = getExportedFileResource(criteria.getExportModel());
-        }
-        return res;
-    }
 
     public ResponseEntity<Integer> getDataSize(Criteria criteria) throws Exception {
         int count = service.getDataSize(criteria);
@@ -326,19 +293,6 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
         GlobalException globalException = new GlobalException(e, messageSource, request.getRequestURI());
         ErrorResponse errorResponse = new ErrorResponse(globalException.getStatus(), e, globalException.getMessage(), request.getRequestURI());
         return new ResponseEntity<>(errorResponse, globalException.getStatus());
-    }
-
-    // Download file
-    protected ResponseEntity<InputStreamResource> getExportedFileResource(ExportModel exportModel) throws Exception {
-        if (isNotEmpty(exportModel)) {
-            String fichier = ExportUtil.exportedList(exportModel, UPLOADED_FOLDER);
-            File file = new File(fichier);
-            FileInputStream inputStream = new FileInputStream(file);
-            InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
-            String fileName = FileUtils.getFileName(file.getName());
-            return ResponseEntity.ok().eTag(fileName).contentLength(file.length()).contentType(MediaType.parseMediaType(Files.probeContentType(file.toPath()))).body(inputStreamResource);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     // Download file
@@ -358,8 +312,8 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
     protected ResponseEntity<List<DTO>> importData(List<DTO> dtos) {
         List<T> items = converter.toItem(dtos);
         items = service.importerData(items);
-        List<DTO> result= converter.toDto(items);
-        return new ResponseEntity<>(result,HttpStatus.OK);
+        List<DTO> result = converter.toDto(items);
+        return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
 
@@ -380,10 +334,10 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
             }
             result = FileUtils.saveFile(UPLOADED_TEMP_FOLDER, UPLOADED_FOLDER, file, filePath, "");
             if (FileUtils.isFileExist(UPLOADED_FOLDER, result)) {
-            // Vérifier checksum fichier sur le dossier data
-            checksum = MD5Checksum.getMD5Checksum(UPLOADED_FOLDER + result);
+                // Vérifier checksum fichier sur le dossier data
+                checksum = MD5Checksum.getMD5Checksum(UPLOADED_FOLDER + result);
                 if (!checksum.equals(checksumOld)) {
-                throw new BusinessRuleException("errors.file.checksum", new String[]{""});
+                    throw new BusinessRuleException("errors.file.checksum", new String[]{""});
                 }
             } else {
                 throw new BusinessRuleException("errors.file.data.creation", new String[]{""});
@@ -391,6 +345,7 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
         }
         return result;
     }
+
     public AbstractController(SERV service, CONV converter) {
         this.service = service;
         this.converter = converter;

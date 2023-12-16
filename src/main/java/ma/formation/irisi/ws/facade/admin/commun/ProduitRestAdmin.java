@@ -1,33 +1,19 @@
 package  ma.formation.irisi.ws.facade.admin.commun;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-
 import ma.formation.irisi.bean.core.commun.Produit;
 import ma.formation.irisi.dao.criteria.core.commun.ProduitCriteria;
 import ma.formation.irisi.service.facade.admin.commun.ProduitAdminService;
 import ma.formation.irisi.ws.converter.commun.ProduitConverter;
 import ma.formation.irisi.ws.dto.commun.ProduitDto;
 import ma.formation.irisi.zynerator.controller.AbstractController;
-import ma.formation.irisi.zynerator.dto.AuditEntityDto;
+import ma.formation.irisi.zynerator.dto.FileTempDto;
 import ma.formation.irisi.zynerator.util.PaginatedList;
-
-
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import ma.formation.irisi.zynerator.process.Result;
-
-
-import org.springframework.web.multipart.MultipartFile;
-import ma.formation.irisi.zynerator.dto.FileTempDto;
 
 @RestController
 @RequestMapping("/api/admin/produit/")
@@ -125,12 +111,6 @@ public class ProduitRestAdmin  extends AbstractController<Produit, ProduitDto, P
     @PostMapping("find-paginated-by-criteria")
     public ResponseEntity<PaginatedList> findPaginatedByCriteria(@RequestBody ProduitCriteria criteria) throws Exception {
         return super.findPaginatedByCriteria(criteria);
-    }
-
-    @Operation(summary = "Exports produits by criteria")
-    @PostMapping("export")
-    public ResponseEntity<InputStreamResource> export(@RequestBody ProduitCriteria criteria) throws Exception {
-        return super.export(criteria);
     }
 
     @Operation(summary = "Gets produit data size by criteria")

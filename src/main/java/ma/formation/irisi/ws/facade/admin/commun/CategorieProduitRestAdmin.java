@@ -1,33 +1,19 @@
 package  ma.formation.irisi.ws.facade.admin.commun;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-
 import ma.formation.irisi.bean.core.commun.CategorieProduit;
 import ma.formation.irisi.dao.criteria.core.commun.CategorieProduitCriteria;
 import ma.formation.irisi.service.facade.admin.commun.CategorieProduitAdminService;
 import ma.formation.irisi.ws.converter.commun.CategorieProduitConverter;
 import ma.formation.irisi.ws.dto.commun.CategorieProduitDto;
 import ma.formation.irisi.zynerator.controller.AbstractController;
-import ma.formation.irisi.zynerator.dto.AuditEntityDto;
+import ma.formation.irisi.zynerator.dto.FileTempDto;
 import ma.formation.irisi.zynerator.util.PaginatedList;
-
-
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import ma.formation.irisi.zynerator.process.Result;
-
-
-import org.springframework.web.multipart.MultipartFile;
-import ma.formation.irisi.zynerator.dto.FileTempDto;
 
 @RestController
 @RequestMapping("/api/admin/categorieProduit/")
@@ -117,11 +103,6 @@ public class CategorieProduitRestAdmin  extends AbstractController<CategorieProd
         return super.findPaginatedByCriteria(criteria);
     }
 
-    @Operation(summary = "Exports categorieProduits by criteria")
-    @PostMapping("export")
-    public ResponseEntity<InputStreamResource> export(@RequestBody CategorieProduitCriteria criteria) throws Exception {
-        return super.export(criteria);
-    }
 
     @Operation(summary = "Gets categorieProduit data size by criteria")
     @PostMapping("data-size-by-criteria")

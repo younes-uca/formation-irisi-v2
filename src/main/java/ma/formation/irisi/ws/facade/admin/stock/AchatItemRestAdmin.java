@@ -1,38 +1,23 @@
-package  ma.formation.irisi.ws.facade.admin.stock;
+package ma.formation.irisi.ws.facade.admin.stock;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-
 import ma.formation.irisi.bean.core.stock.AchatItem;
 import ma.formation.irisi.dao.criteria.core.stock.AchatItemCriteria;
 import ma.formation.irisi.service.facade.admin.stock.AchatItemAdminService;
 import ma.formation.irisi.ws.converter.stock.AchatItemConverter;
 import ma.formation.irisi.ws.dto.stock.AchatItemDto;
 import ma.formation.irisi.zynerator.controller.AbstractController;
-import ma.formation.irisi.zynerator.dto.AuditEntityDto;
+import ma.formation.irisi.zynerator.dto.FileTempDto;
 import ma.formation.irisi.zynerator.util.PaginatedList;
-
-
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import ma.formation.irisi.zynerator.process.Result;
-
-
-import org.springframework.web.multipart.MultipartFile;
-import ma.formation.irisi.zynerator.dto.FileTempDto;
 
 @RestController
 @RequestMapping("/api/admin/achatItem/")
-public class AchatItemRestAdmin  extends AbstractController<AchatItem, AchatItemDto, AchatItemCriteria, AchatItemAdminService, AchatItemConverter> {
-
+public class AchatItemRestAdmin extends AbstractController<AchatItem, AchatItemDto, AchatItemCriteria, AchatItemAdminService, AchatItemConverter> {
 
 
     @Operation(summary = "upload one achatItem")
@@ -40,6 +25,7 @@ public class AchatItemRestAdmin  extends AbstractController<AchatItem, AchatItem
     public ResponseEntity<FileTempDto> uploadFileAndGetChecksum(@RequestBody MultipartFile file) throws Exception {
         return super.uploadFileAndGetChecksum(file);
     }
+
     @Operation(summary = "upload multiple achatItems")
     @RequestMapping(value = "upload-multiple", method = RequestMethod.POST, consumes = "multipart/form-data")
     public ResponseEntity<List<FileTempDto>> uploadMultipleFileAndGetChecksum(@RequestBody MultipartFile[] files) throws Exception {
@@ -77,10 +63,11 @@ public class AchatItemRestAdmin  extends AbstractController<AchatItem, AchatItem
     public ResponseEntity<List<AchatItemDto>> delete(@RequestBody List<AchatItemDto> listToDelete) throws Exception {
         return super.delete(listToDelete);
     }
+
     @Operation(summary = "Delete the specified achatItem")
     @DeleteMapping("")
     public ResponseEntity<AchatItemDto> delete(@RequestBody AchatItemDto dto) throws Exception {
-            return super.delete(dto);
+        return super.delete(dto);
     }
 
     @Operation(summary = "Delete the specified achatItem")
@@ -88,33 +75,38 @@ public class AchatItemRestAdmin  extends AbstractController<AchatItem, AchatItem
     public ResponseEntity<Long> deleteById(@PathVariable Long id) throws Exception {
         return super.deleteById(id);
     }
+
     @Operation(summary = "Delete multiple achatItems by ids")
     @DeleteMapping("multiple/id")
     public ResponseEntity<List<Long>> deleteByIdIn(@RequestBody List<Long> ids) throws Exception {
-            return super.deleteByIdIn(ids);
-     }
+        return super.deleteByIdIn(ids);
+    }
 
 
     @Operation(summary = "find by produit id")
     @GetMapping("produit/id/{id}")
-    public List<AchatItemDto> findByProduitId(@PathVariable Long id){
+    public List<AchatItemDto> findByProduitId(@PathVariable Long id) {
         return findDtos(service.findByProduitId(id));
     }
+
     @Operation(summary = "delete by produit id")
     @DeleteMapping("produit/id/{id}")
-    public int deleteByProduitId(@PathVariable Long id){
+    public int deleteByProduitId(@PathVariable Long id) {
         return service.deleteByProduitId(id);
     }
+
     @Operation(summary = "find by achat id")
     @GetMapping("achat/id/{id}")
-    public List<AchatItemDto> findByAchatId(@PathVariable Long id){
+    public List<AchatItemDto> findByAchatId(@PathVariable Long id) {
         return findDtos(service.findByAchatId(id));
     }
+
     @Operation(summary = "delete by achat id")
     @DeleteMapping("achat/id/{id}")
-    public int deleteByAchatId(@PathVariable Long id){
+    public int deleteByAchatId(@PathVariable Long id) {
         return service.deleteByAchatId(id);
     }
+
     @Operation(summary = "Finds achatItems by criteria")
     @PostMapping("find-by-criteria")
     public ResponseEntity<List<AchatItemDto>> findByCriteria(@RequestBody AchatItemCriteria criteria) throws Exception {
@@ -127,12 +119,6 @@ public class AchatItemRestAdmin  extends AbstractController<AchatItem, AchatItem
         return super.findPaginatedByCriteria(criteria);
     }
 
-    @Operation(summary = "Exports achatItems by criteria")
-    @PostMapping("export")
-    public ResponseEntity<InputStreamResource> export(@RequestBody AchatItemCriteria criteria) throws Exception {
-        return super.export(criteria);
-    }
-
     @Operation(summary = "Gets achatItem data size by criteria")
     @PostMapping("data-size-by-criteria")
     public ResponseEntity<Integer> getDataSize(@RequestBody AchatItemCriteria criteria) throws Exception {
@@ -140,12 +126,9 @@ public class AchatItemRestAdmin  extends AbstractController<AchatItem, AchatItem
     }
 
 
-
-    public AchatItemRestAdmin (AchatItemAdminService service, AchatItemConverter converter) {
+    public AchatItemRestAdmin(AchatItemAdminService service, AchatItemConverter converter) {
         super(service, converter);
     }
-
-
 
 
 }
