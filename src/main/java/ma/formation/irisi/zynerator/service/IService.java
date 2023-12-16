@@ -14,7 +14,7 @@ public interface IService<T extends BusinessObject, Criteria extends BaseCriteri
 
     List<T> update(List<T> ts,boolean createIfNotExist);
 
-    T findById(Long id);
+    T findById(String id);
 
     T findOrSave(T t);
 
@@ -22,7 +22,7 @@ public interface IService<T extends BusinessObject, Criteria extends BaseCriteri
 
     T findByReferenceEntity(T t);
 
-    T findWithAssociatedLists(Long id);
+    T findWithAssociatedLists(String id);
 
     void deleteWithAssociatedLists(T t);
 

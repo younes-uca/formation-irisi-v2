@@ -55,8 +55,6 @@ public class HistBusinessObject extends BusinessObject {
     }
 
     public HistBusinessObject(Long id) {
-        super(id);
-        this.id = id;
     }
 
     public String getObjectName() {

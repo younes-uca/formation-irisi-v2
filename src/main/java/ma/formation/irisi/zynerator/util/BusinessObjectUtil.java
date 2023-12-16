@@ -14,7 +14,6 @@ public class BusinessObjectUtil {
             Long[] ids = new Long[list.size()];
             int i = 0;
             for (BusinessObject obj : list) {
-                ids[i] = obj.getId();
                 i++;
             }
             res = ids;
@@ -27,7 +26,6 @@ public class BusinessObjectUtil {
         List<Long> result = new ArrayList<Long>();
         if (list != null && !list.isEmpty()) {
             for (BusinessObject obj : list) {
-                result.add(obj.getId());
             }
         }
         return result;
@@ -52,7 +50,6 @@ public class BusinessObjectUtil {
             Long[] ids = new Long[set.size()];
             int i = 0;
             for (BusinessObject obj : set) {
-                ids[i] = obj.getId();
                 i++;
             }
             res = ids;

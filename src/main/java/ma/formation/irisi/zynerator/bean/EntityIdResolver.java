@@ -24,7 +24,6 @@ public class EntityIdResolver implements ObjectIdResolver {
                 Object obj = id.scope.newInstance();
                 if (obj instanceof BusinessObject) {
                     o = (BusinessObject) obj;
-                    o.setId(idEntity);
                 }
             }
         } catch (Exception e) {

@@ -23,7 +23,7 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CategorieProduit   extends AuditBusinessObject     {
 
-    private Long id;
+    private String id;
 
     private String reference;
     private String libelle;
@@ -34,7 +34,7 @@ public class CategorieProduit   extends AuditBusinessObject     {
         super();
     }
 
-    public CategorieProduit(Long id,String reference){
+    public CategorieProduit(String id,String reference){
         this.id = id;
         this.reference = reference ;
     }
@@ -46,10 +46,10 @@ public class CategorieProduit   extends AuditBusinessObject     {
 
 
     @Id
-    public Long getId(){
+    public String getId(){
         return this.id;
     }
-    public void setId(Long id){
+    public void setId(String id){
         this.id = id;
     }
     public String getReference(){

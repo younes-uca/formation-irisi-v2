@@ -40,7 +40,7 @@ public abstract class AbstractServiceImpl<T extends AuditBusinessObject, CRITERI
     }
 
 
-    public void deleteAssociatedLists(Long id) {
+    public void deleteAssociatedLists(String id) {
     }
 
     public void deleteAssociatedListsByReferenceEntity(T t) {
@@ -106,7 +106,7 @@ public abstract class AbstractServiceImpl<T extends AuditBusinessObject, CRITERI
                 if (t.getId() == null) {
                     dao.save(t);
                 } else {
-                    T loadedItem = dao.findById(t.getId()).orElse(null);
+                    T loadedItem = dao.findById(Long.valueOf(t.getId())).orElse(null);
                     if (createIfNotExist && (t.getId() == null || loadedItem == null)) {
                         dao.save(t);
                     } else if (t.getId() != null && loadedItem != null) {
@@ -134,7 +134,7 @@ public abstract class AbstractServiceImpl<T extends AuditBusinessObject, CRITERI
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, readOnly = false)
     public T update(T t) {
         //saveAuditData(t, ACTION_TYPE.UPDATE);
-        T loadedItem = dao.findById(t.getId()).orElse(null);
+        T loadedItem = dao.findById(Long.valueOf(t.getId())).orElse(null);
         if (loadedItem == null) {
             throw new EntityNotFoundException("errors.notFound", new String[]{itemClass.getSimpleName(), t.getId().toString()});
         } else {
@@ -146,8 +146,8 @@ public abstract class AbstractServiceImpl<T extends AuditBusinessObject, CRITERI
         }
     }
 
-    public T findById(Long id) {
-        Optional<T> item = dao.findById(id);
+    public T findById(String id) {
+        Optional<T> item = dao.findById(Long.valueOf(id));
         return item.orElse(null);
     }
 
@@ -186,7 +186,7 @@ public abstract class AbstractServiceImpl<T extends AuditBusinessObject, CRITERI
         return list;
     }
 
-    public T findWithAssociatedLists(Long id) {
+    public T findWithAssociatedLists(String id) {
         return findById(id);
     }
 
@@ -203,7 +203,7 @@ public abstract class AbstractServiceImpl<T extends AuditBusinessObject, CRITERI
     public void delete(T t) {
         if (t != null) {
             deleteAssociatedLists(t.getId());
-            dao.deleteById(t.getId()); // il fait find by id apres delete !!!
+            dao.deleteById(Long.valueOf(t.getId())); // il fait find by id apres delete !!!
             //constructAndSaveHistory(dto, ACTION_TYPE.DELETE); TO DO
         }
     }
@@ -213,7 +213,7 @@ public abstract class AbstractServiceImpl<T extends AuditBusinessObject, CRITERI
         if (list != null) {
             for (T t : list) {
                 deleteAssociatedLists(t.getId());
-                dao.deleteById(t.getId()); // il fait find by id apres delete !!!
+                dao.deleteById(Long.valueOf(t.getId())); // il fait find by id apres delete !!!
                 //constructAndSaveHistory(dto, ACTION_TYPE.DELETE); TO DO
             }
         }

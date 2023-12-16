@@ -109,7 +109,7 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
 
 
     public ResponseEntity<DTO> findById(Long id, String[] includes, String[] excludes) throws Exception {
-        T t = service.findById(id);
+        T t = service.findById(id.toString());
         if (t != null) {
             converter.init(true);
             DTO dto = converter.toDto(t);
@@ -130,7 +130,7 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
     }
 
     public ResponseEntity<DTO> findWithAssociatedLists(Long id) {
-        T loaded = service.findWithAssociatedLists(id);
+        T loaded = service.findWithAssociatedLists(id.toString());
         converter.init(true);
         DTO dto = converter.toDto(loaded);
         return new ResponseEntity<>(dto, HttpStatus.OK);
@@ -162,10 +162,10 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
 
     public ResponseEntity<DTO> update(DTO dto) throws Exception {
         ResponseEntity<DTO> res;
-        if (dto.getId() == null || service.findById(dto.getId()) == null)
+        if (dto.getId() == null || service.findById(dto.getId().toString()) == null)
             res = new ResponseEntity<>(HttpStatus.CONFLICT);
         else {
-            T t = service.findById(dto.getId());
+            T t = service.findById(dto.getId().toString());
             converter.copy(dto, t);
             T updated = service.update(t);
             DTO myDto = converter.toDto(updated);
@@ -279,7 +279,6 @@ public class AbstractController<T extends AuditBusinessObject, DTO extends BaseD
         }
         return new ResponseEntity<>(paginatedList, HttpStatus.OK);
     }
-
 
 
     public ResponseEntity<Integer> getDataSize(Criteria criteria) throws Exception {

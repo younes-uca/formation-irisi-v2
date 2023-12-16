@@ -52,7 +52,6 @@ public class AuditEntityDto extends BaseDto {
 
     public <T extends HistBusinessObject> AuditEntityDto convertToDto(AuditEntityDto auditEntityDto, T histBusinessObject) {
         if (auditEntityDto != null) {
-            auditEntityDto.setId(histBusinessObject.getId());
             auditEntityDto.setObjectName(histBusinessObject.getObjectName());
             auditEntityDto.setObjectId(histBusinessObject.getObjectId());
             auditEntityDto.setActionType(histBusinessObject.getActionType());

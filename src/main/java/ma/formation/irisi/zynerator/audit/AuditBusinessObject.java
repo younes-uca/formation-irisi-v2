@@ -19,7 +19,7 @@ public class AuditBusinessObject extends BusinessObject {
         super();
     }
 
-    public AuditBusinessObject(Long id) {
+    public AuditBusinessObject(String id) {
         super(id);
     }
 

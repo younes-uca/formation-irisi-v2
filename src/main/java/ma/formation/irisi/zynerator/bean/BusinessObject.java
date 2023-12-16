@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 public class BusinessObject implements Serializable {
 
-    protected Long id;
+    protected String id;
     protected String label;
     //protected Etablissement etablissement;
 
@@ -21,7 +21,7 @@ public class BusinessObject implements Serializable {
     public BusinessObject() {
     }
 
-    public BusinessObject(Long id) {
+    public BusinessObject(String id) {
         this.id = id;
     }
 
@@ -62,11 +62,11 @@ public class BusinessObject implements Serializable {
     }
 
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
