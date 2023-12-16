@@ -116,11 +116,7 @@ public abstract class Utils {
             Object value2 = getMethodValue(method2, oldVal, tagAnnotation);
             if (BooleanUtil.isNotEquals(value1, value2)) {
                 boolean collection = BooleanUtil.isaBoolean(value1, value2);
-                if (collection) {
-                    AuditEntityUtil.handlCollection(oldVal, list, d, method, value1, value2);
-                } else {
-                    AuditEntityUtil.handelNonCollection(oldVal, list, d, method, value1, method2, value2);
-                }
+
             }
         }
     }

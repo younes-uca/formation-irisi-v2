@@ -4,14 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import ma.formation.irisi.zynerator.bean.BusinessObject;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
 
-@MappedSuperclass
-@EntityListeners(EntityListener.class)
 public class AuditBusinessObject extends BusinessObject {
 
 
@@ -19,6 +14,7 @@ public class AuditBusinessObject extends BusinessObject {
     protected LocalDateTime updatedOn;
     protected String createdBy;
     protected String updatedBy;
+
     public AuditBusinessObject() {
         super();
     }
@@ -28,7 +24,6 @@ public class AuditBusinessObject extends BusinessObject {
     }
 
     @JsonProperty(access = Access.READ_ONLY)
-    @Column(name = "createdon", updatable = false)
     public LocalDateTime getCreatedOn() {
         return createdOn;
     }
@@ -39,7 +34,6 @@ public class AuditBusinessObject extends BusinessObject {
     }
 
     @JsonProperty(access = Access.READ_ONLY)
-    @Column(name = "updatedon")
     public LocalDateTime getUpdatedOn() {
         return updatedOn;
     }
@@ -49,7 +43,6 @@ public class AuditBusinessObject extends BusinessObject {
     }
 
     @JsonProperty(access = Access.READ_ONLY)
-    @Column(name = "createdby", updatable = false)
     public String getCreatedBy() {
         return createdBy != null ? createdBy : "";
     }
@@ -59,7 +52,6 @@ public class AuditBusinessObject extends BusinessObject {
     }
 
     @JsonProperty(access = Access.READ_ONLY)
-    @Column(name = "updatedby")
     public String getUpdatedBy() {
         return updatedBy != null ? updatedBy : "";
     }

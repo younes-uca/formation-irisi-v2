@@ -1,10 +1,7 @@
 package ma.formation.irisi.zynerator.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Lob;
 
 import ma.formation.irisi.zynerator.history.HistBusinessObject;
-import ma.formation.irisi.zynerator.util.DateUtil;
 
 public class AuditEntityDto extends BaseDto {
 
@@ -16,8 +13,6 @@ public class AuditEntityDto extends BaseDto {
     /**
      * OldValue
      */
-    @Lob
-    @Column(columnDefinition="TEXT")
     protected String data;
 
     /**

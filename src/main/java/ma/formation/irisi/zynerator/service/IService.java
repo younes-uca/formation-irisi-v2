@@ -2,11 +2,9 @@ package ma.formation.irisi.zynerator.service;
 
 import ma.formation.irisi.zynerator.bean.BusinessObject;
 import ma.formation.irisi.zynerator.criteria.BaseCriteria;
-import ma.formation.irisi.zynerator.dto.AuditEntityDto;
-import ma.formation.irisi.zynerator.security.bean.User;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import org.springframework.web.multipart.MultipartFile;
 
 public interface IService<T extends BusinessObject, Criteria extends BaseCriteria> {
 
@@ -44,7 +42,6 @@ public interface IService<T extends BusinessObject, Criteria extends BaseCriteri
 
     List<List<T>> getToBeSavedAndToBeDeleted(List<T> oldList, List<T> newList);
 
-    User getCurrentUser();
 
     List<T> importerData(List<T> items);
 

@@ -9,6 +9,7 @@ import ma.formation.irisi.ws.dto.commun.CategorieProduitDto;
 import ma.formation.irisi.zynerator.controller.AbstractController;
 import ma.formation.irisi.zynerator.dto.FileTempDto;
 import ma.formation.irisi.zynerator.util.PaginatedList;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,8 +35,9 @@ public class CategorieProduitRestAdmin  extends AbstractController<CategorieProd
 
     @Operation(summary = "Finds a list of all categorieProduits")
     @GetMapping("")
-    public ResponseEntity<List<CategorieProduitDto>> findAll() throws Exception {
-        return super.findAll();
+    public ResponseEntity<List<CategorieProduit>> findAllDyialna() throws Exception {
+        List<CategorieProduit> list = service.findAllOptimized();
+        return new ResponseEntity<>(list,HttpStatus.OK);
     }
 
     @Operation(summary = "Finds an optimized list of all categorieProduits")
@@ -52,8 +54,8 @@ public class CategorieProduitRestAdmin  extends AbstractController<CategorieProd
 
     @Operation(summary = "Finds a categorieProduit by reference")
     @GetMapping("reference/{reference}")
-    public ResponseEntity<CategorieProduitDto> findByReference(@PathVariable String reference, String[] includes, String[] excludes) throws Exception {
-        return super.findByReferenceEntity(new CategorieProduit(reference), includes, excludes);
+    public ResponseEntity<CategorieProduit> findByReference(@PathVariable String reference, String[] includes, String[] excludes) throws Exception {
+        return new ResponseEntity<>(service.findByReferenceEntity(new CategorieProduit(reference)), HttpStatus.OK);
     }
 
     @Operation(summary = "Saves the specified  categorieProduit")

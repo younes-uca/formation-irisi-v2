@@ -1,6 +1,5 @@
 package ma.formation.irisi.zynerator.bean;
 
-import jakarta.persistence.Transient;
 import java.io.Serializable;
 
 
@@ -71,7 +70,6 @@ public class BusinessObject implements Serializable {
         this.id = id;
     }
 
-    @Transient
     public String getLabel() {
         label = id != null ? id.toString() : null;
         return label;

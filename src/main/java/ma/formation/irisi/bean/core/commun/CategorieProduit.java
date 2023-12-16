@@ -10,23 +10,22 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import ma.formation.irisi.zynerator.audit.AuditBusinessObject;
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.Objects;
 
 
 
 
-@Entity
-@Table(name = "categorie_produit")
+@Document(collection = "categorie_produit")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@SequenceGenerator(name="categorie_produit_seq",sequenceName="categorie_produit_seq",allocationSize=1, initialValue = 1)
 public class CategorieProduit   extends AuditBusinessObject     {
 
     private Long id;
 
-    @Column(length = 500)
     private String reference;
-    @Column(length = 500)
     private String libelle;
 
 
@@ -47,8 +46,6 @@ public class CategorieProduit   extends AuditBusinessObject     {
 
 
     @Id
-    @Column(name = "id")
-        @GeneratedValue(strategy =  GenerationType.SEQUENCE,generator="categorie_produit_seq")
     public Long getId(){
         return this.id;
     }

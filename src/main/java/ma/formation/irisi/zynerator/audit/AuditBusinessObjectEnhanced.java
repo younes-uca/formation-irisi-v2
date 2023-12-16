@@ -1,13 +1,5 @@
 package ma.formation.irisi.zynerator.audit;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
-import ma.formation.irisi.zynerator.bean.BusinessObject;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
-
 /**
  * Classe mère abstraite de tous les Objets métier hl7 et order.
  *
@@ -16,8 +8,6 @@ import jakarta.persistence.MappedSuperclass;
  */
 
 
-@MappedSuperclass
-@EntityListeners(EntityListener.class)
 public class AuditBusinessObjectEnhanced extends AuditBusinessObject {
 
     protected Long etablissementId;

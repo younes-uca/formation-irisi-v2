@@ -5,49 +5,33 @@ import ma.formation.irisi.zynerator.criteria.BaseCriteria;
 import ma.formation.irisi.zynerator.exception.BusinessRuleException;
 import ma.formation.irisi.zynerator.exception.EntityNotFoundException;
 import ma.formation.irisi.zynerator.repository.AbstractRepository;
-import ma.formation.irisi.zynerator.security.bean.User;
-import ma.formation.irisi.zynerator.security.service.facade.UserService;
-import ma.formation.irisi.zynerator.specification.AbstractSpecification;
 import ma.formation.irisi.zynerator.util.FileUtils;
 import ma.formation.irisi.zynerator.util.ListUtil;
 import ma.formation.irisi.zynerator.util.MD5Checksum;
 import ma.formation.irisi.zynerator.util.RefelexivityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 
 public abstract class AbstractServiceImpl<T extends AuditBusinessObject, CRITERIA extends BaseCriteria, REPO extends AbstractRepository<T, Long>> extends AbstractServiceImplHelper<T> {
 
-    protected AbstractSpecification<CRITERIA, T> specification;
-    protected Class<? extends AbstractSpecification<CRITERIA, T>> specificationClass;
-
-
 
     protected REPO dao;
-    @Autowired
-    protected UserService userService;
+
 
     protected Class<T> itemClass;
 
-@Value("${uploads.location.directory}")
+    @Value("${uploads.location.directory}")
     private String UPLOADED_FOLDER;
-@Value("${uploads.location.temp}")
+    @Value("${uploads.location.temp}")
     private String UPLOADED_TEMP_FOLDER;
 
     public AbstractServiceImpl(REPO dao) {
@@ -111,7 +95,7 @@ public abstract class AbstractServiceImpl<T extends AuditBusinessObject, CRITERI
                 }
             }
         }
-    return result;
+        return result;
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, readOnly = false)
@@ -163,7 +147,7 @@ public abstract class AbstractServiceImpl<T extends AuditBusinessObject, CRITERI
     }
 
     public T findById(Long id) {
-    Optional<T> item = dao.findById(id);
+        Optional<T> item = dao.findById(id);
         return item.orElse(null);
     }
 
@@ -192,7 +176,7 @@ public abstract class AbstractServiceImpl<T extends AuditBusinessObject, CRITERI
         List<T> list = new ArrayList<>();
         for (T t : items) {
             T founded = findByReferenceEntity(t);
-                if (founded == null) {
+            if (founded == null) {
                 findOrSaveAssociatedObject(t);
                 dao.save(t);
             } else {
@@ -230,60 +214,16 @@ public abstract class AbstractServiceImpl<T extends AuditBusinessObject, CRITERI
             for (T t : list) {
                 deleteAssociatedLists(t.getId());
                 dao.deleteById(t.getId()); // il fait find by id apres delete !!!
-            //constructAndSaveHistory(dto, ACTION_TYPE.DELETE); TO DO
+                //constructAndSaveHistory(dto, ACTION_TYPE.DELETE); TO DO
             }
         }
-    }
-
-
-    public List<T> findByCriteria(CRITERIA criteria) {
-        List<T> content = null;
-        if (criteria != null) {
-            addEtablissementConstraint(criteria);
-            AbstractSpecification<CRITERIA, T> mySpecification = constructSpecification(criteria);
-            if (criteria.isPeagable()) {
-                Pageable pageable = PageRequest.of(0, criteria.getMaxResults());
-                content = dao.findAll(mySpecification, pageable).getContent();
-            } else {
-                content = dao.findAll(mySpecification);
-            }
-        } else {
-            content = dao.findAll();
-        }
-        return content;
-
-    }
-
-    public List<T> findPaginatedByCriteria(CRITERIA criteria, int page, int pageSize, String order, String sortField) {
-        addEtablissementConstraint(criteria);
-        AbstractSpecification<CRITERIA, T> mySpecification = constructSpecification(criteria);
-        order = (order != null && !order.isEmpty()) ? order : "desc";
-        sortField = (sortField != null && !sortField.isEmpty()) ? sortField : "id";
-        Pageable pageable = PageRequest.of(page, pageSize, Sort.Direction.fromString(order), sortField);
-        return dao.findAll(mySpecification, pageable).getContent();
-    }
-
-    public int getDataSize(CRITERIA criteria) {
-        addEtablissementConstraint(criteria);
-        AbstractSpecification<CRITERIA, T> mySpecification = constructSpecification(criteria);
-        mySpecification.setDistinct(true);
-        return ((Long) dao.count(mySpecification)).intValue();
     }
 
 
     public List<T> findAll() {
         return dao.findAll();
-        }
-
-    public List<T> findAllOptimized() {
-        return dao.findAll();
     }
 
-
-    private AbstractSpecification<CRITERIA, T> constructSpecification(CRITERIA criteria) {
-        AbstractSpecification<CRITERIA, T> mySpecification = RefelexivityUtil.constructObjectUsingOneParam(specificationClass, criteria);
-        return mySpecification;
-    }
 
     //****************************** HISTORY
 
@@ -321,43 +261,14 @@ public abstract class AbstractServiceImpl<T extends AuditBusinessObject, CRITERI
     */
 
 
-
-
-    public void configure(Class<T> itemClass, Class<? extends AbstractSpecification<CRITERIA, T>> specificationClass) {
+    public void configure(Class<T> itemClass) {
         this.itemClass = itemClass;
-        this.specificationClass = specificationClass;
     }
 
     public abstract void configure();
 
 
-    private void addEtablissementConstraint(CRITERIA criteria) {
-        Object userInfo = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (userInfo instanceof User) {
-        User currentUser = (User) userInfo;
-        criteria.setEtablissementId(currentUser.getEtablissement() != null ? currentUser.getEtablissement().getId() : null);
-        }
-    }
-
-    public User getCurrentUser() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal != null && principal instanceof User) {
-        return (User) principal;
-        } else if (principal != null && principal instanceof String) {
-        return userService.findByUsername(principal.toString());
-        } else {
-        return null;
-        }
-    }
-
-    public Long getEtablissementId() {
-        User currentUser = getCurrentUser();
-        Long etablissementId = (currentUser != null && currentUser.getEtablissement() != null) ? currentUser.getEtablissement().getId() : null;
-        return etablissementId == null ? 1L : etablissementId; // TODO: if conneceted user is null exception
-    }
-
-
-    public String uploadFile(String checksumOld, String tempUpladedFile,String destinationFilePath) throws Exception {
+    public String uploadFile(String checksumOld, String tempUpladedFile, String destinationFilePath) throws Exception {
         String crName = null;
         if (FileUtils.isFileExist(UPLOADED_TEMP_FOLDER, tempUpladedFile)) {
             String filePath = destinationFilePath;
@@ -365,9 +276,9 @@ public abstract class AbstractServiceImpl<T extends AuditBusinessObject, CRITERI
                 return crName;
 
             String checksum = MD5Checksum.getMD5Checksum(UPLOADED_TEMP_FOLDER + tempUpladedFile);
-                if (!checksum.equals(checksumOld)) {
-                    throw new BusinessRuleException("errors.file.checksum", new String[]{tempUpladedFile});
-                }
+            if (!checksum.equals(checksumOld)) {
+                throw new BusinessRuleException("errors.file.checksum", new String[]{tempUpladedFile});
+            }
 
             crName = FileUtils.saveFile(UPLOADED_TEMP_FOLDER, UPLOADED_FOLDER, tempUpladedFile, filePath, "");
 

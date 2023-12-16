@@ -2,7 +2,6 @@ package ma.formation.irisi.zynerator.history;
 
 import ma.formation.irisi.zynerator.bean.BusinessObject;
 
-import jakarta.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
 /**
@@ -11,7 +10,6 @@ import java.time.LocalDateTime;
  * @version 1.2
  */
 
-@MappedSuperclass
 public class HistBusinessObject extends BusinessObject {
 
     /**
